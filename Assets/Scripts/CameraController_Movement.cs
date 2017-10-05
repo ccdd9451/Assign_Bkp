@@ -70,10 +70,10 @@ public class CameraController_Movement : MonoBehaviour {
         ObsControl();
 
 
-        if (Input.GetKey ((KeyCode)KEYBOARD_INPUT.DIRECTOR)) {
+        if (Input.GetKeyDown ((KeyCode)KEYBOARD_INPUT.DIRECTOR)) {
 			Directing ();
 		}
-		if (Input.GetKey ((KeyCode)KEYBOARD_INPUT.ACTIVATOR)) {
+		if (Input.GetKeyDown ((KeyCode)KEYBOARD_INPUT.ACTIVATOR)) {
 			ActivateOrCancel ();
 		}
         /*if (Input.GetKey((KeyCode)KEYBOARD_INPUT.ACTIVATOR))
@@ -104,6 +104,8 @@ public class CameraController_Movement : MonoBehaviour {
                 movement.z -= 1;
             }
             movement = movement * maxSpeed;
+            movement = transform.rotation * movement;
+            movement.y = 0;
             activatedObstacle.GetComponent<Rigidbody>().velocity = movement;
         }
     }
@@ -127,7 +129,7 @@ public class CameraController_Movement : MonoBehaviour {
         {
             movement.z -= 1;
         }
-        movement = transform.localRotation * movement;
+        movement = transform.rotation * movement;
         movement.y = 0;
         if (Input.GetKey((KeyCode)KEYBOARD_INPUT.UP))
         {
@@ -146,12 +148,11 @@ public class CameraController_Movement : MonoBehaviour {
 		if (Physics.Raycast (transform.position,
 			    transform.forward, out hit, 500)) {
 			Debug.DrawLine (transform.position, hit.point);
-            foreach (SimpleNavmeshAgent agent 
+            foreach (SimpleNavmeshAgent agent
                 in NavGroup.GetComponentsInChildren<SimpleNavmeshAgent>())
             {
                 Debug.Log("hitted at" + hit.point.ToString());
-                agent.OnNavigating = true;
-                agent.target = hit.point;
+                agent.SetDestination(hit.point);
             }
 		}
 	}
@@ -193,7 +194,6 @@ public class CameraController_Movement : MonoBehaviour {
         activatedObstacle = obstacle;
         activatedObstacle.GetComponent<ObstacleControl>().SetOnCommand(true);
     }
-
     private void DeactivateCurrent()
     {
         Debug.Log("deactivating");

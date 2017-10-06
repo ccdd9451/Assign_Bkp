@@ -6,6 +6,7 @@ public class CurveAnimator : MonoBehaviour {
     Transform t;
     Quaternion q;
     public int FrameRate = 30;
+    public int TimeDelta = 0;
 
     float lastFrame = 0;
 
@@ -17,13 +18,13 @@ public class CurveAnimator : MonoBehaviour {
         t = this.transform;
         q = t.rotation;
         if (curve != null) {
-            curve.ResetCurve();
+            curve.ResetCurve(TimeDelta);
             t.position = curve.GetCurvePoint();
         }
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 	    if(followCurve) {
             if(lastFrame >= 1 / (float) FrameRate) {
                 Vector3 p = curve != null ? curve.GetCurvePoint() : Vector3.zero;

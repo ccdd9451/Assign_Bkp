@@ -33,7 +33,7 @@ public class ObstacleControl : MonoBehaviour {
         else
         {
             Renderer renderer = GetComponent<Renderer>();
-            renderer.material.color = Color.white;
+            renderer.material.color = Color.red;
         }
     }
 }

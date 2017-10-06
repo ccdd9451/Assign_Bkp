@@ -86,7 +86,7 @@ public class CatmullRomSpline : MonoBehaviour, ICurve {
     private int currentControlPoint = 0;
     private float currentT = 0;
     private bool running = false;
-    private int velocity = 20;
+    private int velocity = 150;
     private int calls = 0;
 
     public void SetSteps(int v) {
@@ -137,8 +137,15 @@ public class CatmullRomSpline : MonoBehaviour, ICurve {
         return this.transform.TransformPoint(dir).normalized;
     }
 
-    public void ResetCurve() {
+    public void ResetCurve()
+    {
         currentControlPoint = loop ? 0 : 1;
         currentT = 0;
+    }
+
+    public void ResetCurve(int TimeDelta) {
+        currentControlPoint = loop ? 0 : 1;
+        currentT = 0;
+        calls = TimeDelta;
     }
 }

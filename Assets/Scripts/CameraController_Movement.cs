@@ -151,7 +151,6 @@ public class CameraController_Movement : MonoBehaviour {
             foreach (SimpleNavmeshAgent agent
                 in NavGroup.GetComponentsInChildren<SimpleNavmeshAgent>())
             {
-                Debug.Log("hitted at" + hit.point.ToString());
                 agent.SetDestination(hit.point);
             }
 		}
@@ -190,13 +189,11 @@ public class CameraController_Movement : MonoBehaviour {
 
     private void ActivatedObstacle(GameObject obstacle)
     {
-        Debug.Log("activating");
         activatedObstacle = obstacle;
         activatedObstacle.GetComponent<ObstacleControl>().SetOnCommand(true);
     }
     private void DeactivateCurrent()
     {
-        Debug.Log("deactivating");
         if (activatedObstacle)
         {
             activatedObstacle.GetComponent<ObstacleControl>().SetOnCommand(false);

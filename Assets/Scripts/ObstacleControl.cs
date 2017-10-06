@@ -15,8 +15,12 @@ public class ObstacleControl : MonoBehaviour {
 
     // Update is called once per frame
     void FixedUpdate() {
+        Debug.Log("velo: " + rb.velocity.ToString());
+
         movement = Vector3.Lerp(movement, Vector3.zero, Time.deltaTime*5);
+        movement.y = rb.velocity.y-100;
         rb.velocity = movement;
+        //rb.AddForce((float)980*Vector3.down);
 	}
 
     public void SetOnCommand(bool b)

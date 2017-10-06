@@ -26,26 +26,30 @@ public class SimpleNavmeshAgent : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        
         if (OnNavigating)
         {
+            Vector3 lastpos = transform.position;
             transform.position = Agent.nextPosition;
-            /*if (Agent.pathStatus == NavMeshPathStatus.PathComplete && Agent.remainingDistance < 0.1)
+
+            if (!Agent.pathPending && 
+                Agent.pathStatus == NavMeshPathStatus.PathComplete &&
+                Agent.remainingDistance < 0.3)
             {
-                Debug.Log("Nav succeed");
                 Agent.isStopped = true;
                 OnNavigating = false;
-            }*/
+                rb.velocity = Vector3.zero;
+            }
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionStay(Collision collision)
     {
         GameObject target = collision.gameObject;
-        if (target.tag == "Agent")
+        if (OnNavigating && target.tag == "Agent")
         {
             if (!target.GetComponent<SimpleNavmeshAgent>().OnNavigating)
             {
-                Debug.Log("Nav stop by collide");
                 Agent.isStopped = true;
                 OnNavigating = false;
             }
@@ -54,7 +58,12 @@ public class SimpleNavmeshAgent : MonoBehaviour {
 
     public void SetDestination(Vector3 dest)
     {
+        Agent.ResetPath();
+        Agent.nextPosition = transform.position;
         Agent.SetDestination(dest);
+        Debug.Log("destination setted at:" +
+            dest.ToString());
+
         OnNavigating = true;
     }
 }

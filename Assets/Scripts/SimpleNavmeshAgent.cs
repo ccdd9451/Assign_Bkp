@@ -13,14 +13,10 @@ public class SimpleNavmeshAgent : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        Agent = GetComponent<NavMeshAgent>();
-        Agent.updatePosition = false;
-        Agent.updateRotation = false;
-        Agent.updateUpAxis = false;
-
+        Agent = GetComponent<NavMeshAgent>();     
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-
+        ToggleDelegateOnNavigating(false);
     }
 
     // Update is called once per frame
@@ -30,16 +26,18 @@ public class SimpleNavmeshAgent : MonoBehaviour {
         if (OnNavigating)
         {
             Vector3 lastpos = transform.position;
-            transform.position = Agent.nextPosition;
 
-            if (!Agent.pathPending && 
+            if (!Agent.pathPending &&
                 Agent.pathStatus == NavMeshPathStatus.PathComplete &&
                 Agent.remainingDistance < 0.3)
             {
                 Agent.isStopped = true;
                 OnNavigating = false;
                 rb.velocity = Vector3.zero;
+                ToggleDelegateOnNavigating(false);
             }
+            transform.position = Agent.nextPosition;
+
         }
     }
 
@@ -51,8 +49,10 @@ public class SimpleNavmeshAgent : MonoBehaviour {
             if (!target.GetComponent<SimpleNavmeshAgent>().OnNavigating)
             {
                 Agent.isStopped = true;
-                OnNavigating = false;
+                ToggleDelegateOnNavigating(false);
             }
+            transform.position = Agent.nextPosition;
+
         }
     }
 
@@ -61,9 +61,16 @@ public class SimpleNavmeshAgent : MonoBehaviour {
         Agent.ResetPath();
         Agent.nextPosition = transform.position;
         Agent.SetDestination(dest);
-        Debug.Log("destination setted at:" +
-            dest.ToString());
+        ToggleDelegateOnNavigating(true);
+        
+    }
 
-        OnNavigating = true;
+    private void ToggleDelegateOnNavigating(bool b)
+    {
+        OnNavigating = b;
+        rb.isKinematic = !b;
+        Agent.updatePosition = !b;
+        Agent.updateRotation = !b;
+        Agent.updateUpAxis = !b;
     }
 }

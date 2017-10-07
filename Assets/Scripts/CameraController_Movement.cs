@@ -1,7 +1,10 @@
-﻿using System;
+﻿//#define DVORAK
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class CameraController_Movement : MonoBehaviour {
 
@@ -26,6 +29,7 @@ public class CameraController_Movement : MonoBehaviour {
     #endregion
 
     #region Enums
+#if DVORAK
     public enum KEYBOARD_INPUT : int {
 		DOWN = KeyCode.LeftShift,
 		UP = KeyCode.Space,
@@ -35,13 +39,29 @@ public class CameraController_Movement : MonoBehaviour {
 		BACKWARD = KeyCode.O,
 		DIRECTOR = KeyCode.Mouse1,
 		ACTIVATOR = KeyCode.Mouse0,
-        CANCELCMDS = KeyCode.Q,
         OBSDOWN = KeyCode.DownArrow,
         OBSUP = KeyCode.UpArrow,
         OBSLEFT = KeyCode.LeftArrow,
         OBSRIGHT = KeyCode.RightArrow,
     }
-    #endregion
+#else
+        public enum KEYBOARD_INPUT : int {
+		DOWN = KeyCode.LeftShift,
+		UP = KeyCode.Space,
+		LEFT = KeyCode.A,
+		RIGHT = KeyCode.D,
+		FORWARD = KeyCode.W,
+		BACKWARD = KeyCode.S,
+		DIRECTOR = KeyCode.Mouse1,
+		ACTIVATOR = KeyCode.Mouse0,
+        OBSDOWN = KeyCode.DownArrow,
+        OBSUP = KeyCode.UpArrow,
+        OBSLEFT = KeyCode.LeftArrow,
+        OBSRIGHT = KeyCode.RightArrow,
+    }
+#endif
+
+#endregion
 
 
     // Use this for initialization
@@ -76,10 +96,6 @@ public class CameraController_Movement : MonoBehaviour {
 		if (Input.GetKeyDown ((KeyCode)KEYBOARD_INPUT.ACTIVATOR)) {
 			ActivateOrCancel ();
 		}
-        /*if (Input.GetKey((KeyCode)KEYBOARD_INPUT.ACTIVATOR))
-        {
-            Cancel();
-        }*/
     }
 
     private void ObsControl()
@@ -103,10 +119,10 @@ public class CameraController_Movement : MonoBehaviour {
             {
                 movement.z -= 1;
             }
-            movement = movement * maxSpeed;
             movement = transform.rotation * movement;
             movement.y = 0;
-            activatedObstacle.GetComponent<Rigidbody>().velocity = movement;
+            movement = movement.normalized * maxSpeed;
+            activatedObstacle.GetComponent<ObstacleControl>().movement = movement;
         }
     }
 
@@ -129,7 +145,7 @@ public class CameraController_Movement : MonoBehaviour {
         {
             movement.z -= 1;
         }
-        movement = transform.rotation * movement;
+        movement = (transform.rotation * movement).normalized;
         movement.y = 0;
         if (Input.GetKey((KeyCode)KEYBOARD_INPUT.UP))
         {
